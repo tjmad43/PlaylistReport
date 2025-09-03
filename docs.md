@@ -28,4 +28,8 @@ To use Spotify Web API, the app needs permission from a logged in Spotify user
 - get playlist from parsed args:
   - `playlist_input = args.playlist`
 - check if a link was given, and strip down to playlist ID if so
-- use spotipy to put tracks into list (incl dictionary of details)
+- use spotipy to put tracks into list that contains a dictionary of details for each one
+- check all tracks are valid - some may be stored locally or unavailable in region
+
+## Analyse
+Since there is no longer access to audio features, do what we can with basic info

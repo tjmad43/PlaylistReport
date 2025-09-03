@@ -21,13 +21,13 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
 print("Authenticated as:", sp.current_user()['display_name'])
 
 
+
 # Get playlist data
 # Define playlist as an argument the user has to provide
 parser = argparse.ArgumentParser(description="Generate a Spotify playlist report.")
 parser.add_argument("--playlist", type=str, required=True, help="Spotify playlist URL or ID")
 # Parse the argument
 args = parser.parse_args()
-
 
 # Get the playlist input from the parsed arguments
 playlist_input = args.playlist
@@ -40,53 +40,39 @@ else:
 
 print(f"Using playlist ID: {playlist_id}")
 
-
+# Get tracks from playlist
 results = sp.playlist_items(playlist_id, additional_types=['track'])
 
 tracks = []
+count = 0
 for item in results['items']:
     track = item['track']
+    count +=1
     tracks.append({
         "name": track['name'],
         "artist": track['artists'][0]['name'],
         "album": track['album']['name'],
         "duration_ms": track['duration_ms'],
         "popularity": track['popularity'],
-        "id": track['id']
+        "id": track['id'],
+        "position": count,
+        "explicit": track['explicit']
     })
 
+# Check all tracks are valid
+valid_track_ids = []
+for t in tracks:
+    try:
+        sp.track(t["id"])
+        valid_track_ids.append(t["id"])
+    except spotipy.exceptions.SpotifyException as e:
+        print(f"Skipping track {t['name']} ({t['id']}): {e}")
 
-# Get audio features
-track_ids = [t["id"] for t in tracks if t["id"]]
-features = sp.audio_features(track_ids)
+# Print info
+for i in tracks:
+    print(f"{i['position']:>2}. {i['name']} by {i['artist']} "
+          f"({i['album']}) - {i['duration_ms']//1000}s, Popularity: {i['popularity']}, Explicit: {i['explicit']}")
 
-for i, feat in enumerate(features):
-    if feat:  # Sometimes a track may not have features
-        tracks[i].update({
-            "danceability": feat['danceability'],
-            "energy": feat['energy'],
-            "tempo": feat['tempo'],
-            "valence": feat['valence']
-        })
-
-
-# Analyse
-df = pd.DataFrame(tracks)
-
-print(df.head())
-print("\nAverage tempo:", df['tempo'].mean())
-print("Most popular artist:", df['artist'].mode()[0])
 
 
 # Visualise
-# Histogram of tempos
-plt.hist(df['tempo'].dropna(), bins=20, edgecolor='black')
-plt.title("Tempo Distribution")
-plt.xlabel("Tempo (BPM)")
-plt.ylabel("Number of Tracks")
-plt.show()
-
-# Bar chart of top 5 artists
-df['artist'].value_counts().head(5).plot(kind='bar')
-plt.title("Top 5 Artists in Playlist")
-plt.show()
