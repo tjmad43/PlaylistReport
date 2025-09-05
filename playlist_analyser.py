@@ -127,20 +127,81 @@ elements.append(Spacer(1, 30))
 
 
 # Explicit?
+explicit_counts = df['explicit'].value_counts()
+plt.figure(figsize=(6,6))
+plt.pie(
+    explicit_counts,
+    labels=['Explicit', 'Clean'],
+    autopct='%1.1f%%',
+    colors=['#1DB954', '#CCCCCC'],
+    startangle=90
+)
+plt.title("Explicit vs Clean Tracks")
+plt.savefig("explicit_pie_chart.png")
+plt.close()
+elements.append(Image("explicit_pie_chart.png", width=400, height=300))
 
 
 # Popularity
-
+plt.figure(figsize=(6,4))
+df["popularity"].plot(kind="hist", bins=10, edgecolor="black")
+plt.title("Track Popularity Distribution")
+plt.xlabel("Popularity")
+plt.ylabel("Count")
+plt.tight_layout()
+plt.savefig("popularity_chart.png")
+plt.close()
+elements.append(Image("popularity_chart.png", width=400, height=300))
 
 # Duration
+plt.figure(figsize=(10,5))
+plt.plot(df["position"], df["duration_min"], marker='o', linestyle='-', color='#1DB954')
+plt.title("Track Duration Across Playlist")
+plt.xlabel("Track Position")
+plt.ylabel("Duration (minutes)")
+plt.grid(True)
+plt.tight_layout()
+plt.savefig("duration_line_chart.png")
+plt.close()
+elements.append(Image("duration_line_chart.png", width=400, height=300))
 
 
-# Top artist(s)
+# Top artists
+# Number of tracks per artist
+artist_counts = df['artist'].value_counts()
+
+# Get top 5 artists
+top_artists = artist_counts.head(5)
+
+plt.figure(figsize=(8,5))
+top_artists.plot(kind="bar", color="#1DB954")
+plt.title("Top Artists in Playlist")
+plt.xlabel("Artist")
+plt.ylabel("Number of Tracks")
+plt.xticks(rotation=45, ha="right")
+plt.tight_layout()
+plt.savefig("top_artists.png")
+plt.close()
+elements.append(Image("top_artists.png", width=400, height=300))
 
 
-# Top album(s)
+# Top albums
+# Number of tracks per album
+album_counts = df['album'].value_counts()
 
+# Get top 5 albums
+top_albums = album_counts.head(5)
 
+plt.figure(figsize=(8,5))
+top_albums.plot(kind="bar", color="#1DB954")
+plt.title("Top Albums in Playlist")
+plt.xlabel("Album")
+plt.ylabel("Number of Tracks")
+plt.xticks(rotation=45, ha="right")
+plt.tight_layout()
+plt.savefig("top_albums.png")
+plt.close()
+elements.append(Image("top_albums.png", width=400, height=300))
 
 
 # Build PDF
