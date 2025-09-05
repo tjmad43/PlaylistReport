@@ -23,7 +23,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
     redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
     scope="playlist-read-private",
-    cache_path=".spotifycache"
+    cache_path=".cache"
 ))
 # Check it worked
 print("Authenticated as:", sp.current_user()['display_name'])
@@ -108,6 +108,10 @@ elements = []
 
 # --- Visualise ---
 
+spoticolor1 = "#1DB954"
+spoticolor2 = "#212121"
+spoticolor3 = "#B3B3B3"
+
 # Title
 elements.append(Paragraph("Spotify Playlist Report - " + plname, styles["Title"]))
 elements.append(Spacer(1, 20))
@@ -150,18 +154,19 @@ plt.pie(
     explicit_counts,
     labels=['Explicit', 'Clean'],
     autopct='%1.1f%%',
-    colors=['#1DB954', '#CCCCCC'],
+    colors=[spoticolor1, spoticolor3],
     startangle=90
 )
 plt.title("Explicit vs Clean Tracks")
 plt.savefig(pie_path)
 plt.close()
-elements.append(Image(pie_path, width=400, height=300))
+elements.append(Image(pie_path, width=400, height=400))
+elements.append(Spacer(1, 30))
 
 
 # Popularity
 plt.figure(figsize=(6,4))
-df["popularity"].plot(kind="hist", bins=10, edgecolor="black")
+df["popularity"].plot(kind="hist", bins=10, edgecolor=spoticolor2, color=spoticolor1)
 plt.title("Track Popularity Distribution")
 plt.xlabel("Popularity")
 plt.ylabel("Count")
@@ -169,10 +174,11 @@ plt.tight_layout()
 plt.savefig(popularity_path)
 plt.close()
 elements.append(Image(popularity_path, width=400, height=300))
+elements.append(Spacer(1, 30))
 
 # Duration
 plt.figure(figsize=(10,5))
-plt.plot(df["position"], df["duration_min"], marker='o', linestyle='-', color='#1DB954')
+plt.plot(df["position"], df["duration_min"], marker='o', linestyle='-', color=spoticolor1)
 plt.title("Track Duration Across Playlist")
 plt.xlabel("Track Position")
 plt.ylabel("Duration (minutes)")
@@ -180,7 +186,8 @@ plt.grid(True)
 plt.tight_layout()
 plt.savefig(duration_path)
 plt.close()
-elements.append(Image(duration_path, width=400, height=300))
+elements.append(Image(duration_path, width=480, height=300))
+elements.append(Spacer(1, 30))
 
 
 # Top artists
@@ -191,7 +198,7 @@ artist_counts = df['artist'].value_counts()
 top_artists = artist_counts.head(5)
 
 plt.figure(figsize=(8,5))
-top_artists.plot(kind="bar", color="#1DB954")
+top_artists.plot(kind="bar", color=spoticolor1)
 plt.title("Top Artists in Playlist")
 plt.xlabel("Artist")
 plt.ylabel("Number of Tracks")
@@ -199,7 +206,8 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 plt.savefig(top_artists_path)
 plt.close()
-elements.append(Image(top_artists_path, width=400, height=300))
+elements.append(Image(top_artists_path, width=450, height=300))
+elements.append(Spacer(1, 30))
 
 
 # Top albums
@@ -210,7 +218,7 @@ album_counts = df['album'].value_counts()
 top_albums = album_counts.head(5)
 
 plt.figure(figsize=(8,5))
-top_albums.plot(kind="bar", color="#1DB954")
+top_albums.plot(kind="bar", color=spoticolor1)
 plt.title("Top Albums in Playlist")
 plt.xlabel("Album")
 plt.ylabel("Number of Tracks")
@@ -218,7 +226,8 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 plt.savefig(top_albums_path)
 plt.close()
-elements.append(Image(top_albums_path, width=400, height=300))
+elements.append(Image(top_albums_path, width=450, height=300))
+
 
 
 # Build PDF
