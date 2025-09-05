@@ -2,3 +2,4 @@ python-dotenv
 spotipy
 pandas
 matplotlib
+reportlab

@@ -20,6 +20,7 @@ To use Spotify Web API, the app needs permission from a logged in Spotify user
 - can then set client id, client secret and redirect URI in script
 
 ## Get playlist data
+spotipy documentation: https://spotipy.readthedocs.io/en/2.25.1/
 - define the `playlist` as an argument to be given when script is run
   - `parser = argparse.ArgumentParser(description="Generate a Spotify playlist report.")`
   - `parser.add_argument("--playlist", type=str, required=True, help="Spotify playlist URL or ID")`
@@ -33,3 +34,5 @@ To use Spotify Web API, the app needs permission from a logged in Spotify user
 
 ## Analyse
 Since there is no longer access to audio features, do what we can with basic info
+- convert tracks to a pandas dataframe
+- set up a pdf for the report with reportlab
