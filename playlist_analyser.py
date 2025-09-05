@@ -21,7 +21,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     client_id=os.getenv("SPOTIPY_CLIENT_ID"),
     client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
     redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
-    scope="playlist-read-private"
+    scope="playlist-read-private",
+    cache_path=".spotifycache"
 ))
 # Check it worked
 print("Authenticated as:", sp.current_user()['display_name'])
@@ -108,11 +109,11 @@ elements.append(Paragraph(summary_text, styles["Normal"]))
 elements.append(Spacer(1, 20))
 
 # Table of tracks
-table_data = [["#", "Track", "Artist", "Popularity"]]
+table_data = [["#", "Track", "Artist", "Album"]]
 for _, row in df.iterrows():
     table_data.append([row["position"], row["name"], row["artist"], row["album"]])
 
-table = Table(table_data, colWidths=[30, 200, 150, 80])
+table = Table(table_data, colWidths=[30, 190, 120, 170])
 table.setStyle(TableStyle([
     ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
     ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
@@ -123,6 +124,21 @@ table.setStyle(TableStyle([
 ]))
 elements.append(table)
 elements.append(Spacer(1, 30))
+
+
+# Explicit?
+
+
+# Popularity
+
+
+# Duration
+
+
+# Top artist(s)
+
+
+# Top album(s)
 
 
 
