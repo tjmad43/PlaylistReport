@@ -12,6 +12,7 @@ from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak
 )
 from reportlab.lib import colors
+from pathlib import Path
 
 # Load variables from .env
 load_dotenv()
@@ -78,18 +79,34 @@ for t in tracks:
 
 
 
-# --- Visualise ---
+# --- Organisation ---
+
 # Convert to dataframe
 df = pd.DataFrame(tracks)
 
 # Convert duration ms -> mins
 df["duration_min"] = df["duration_ms"] / 60000
 
+# Set up folder for diagrams & report
+folder_name = "playlist_report"
+output_folder = Path(folder_name)
+output_folder.mkdir(exist_ok=True)
+
+pie_path = output_folder / "explicit_pie_chart.png"
+popularity_path = output_folder / "popularity_chart.png"
+duration_path = output_folder / "duration_line_chart.png"
+top_artists_path = output_folder / "top_artists_chart.png"
+top_albums_path = output_folder / "top_albums_chart.png"
+pdf_path = output_folder / "playlist_report.pdf"
+
 # Set up PDF for report
-filename = "playlist_report.pdf"
-doc = SimpleDocTemplate(filename, pagesize=A4)
+doc = SimpleDocTemplate(str(pdf_path), pagesize=A4)
 styles = getSampleStyleSheet()
 elements = []
+
+
+
+# --- Visualise ---
 
 # Title
 elements.append(Paragraph("Spotify Playlist Report - " + plname, styles["Title"]))
@@ -137,9 +154,9 @@ plt.pie(
     startangle=90
 )
 plt.title("Explicit vs Clean Tracks")
-plt.savefig("explicit_pie_chart.png")
+plt.savefig(pie_path)
 plt.close()
-elements.append(Image("explicit_pie_chart.png", width=400, height=300))
+elements.append(Image(pie_path, width=400, height=300))
 
 
 # Popularity
@@ -149,9 +166,9 @@ plt.title("Track Popularity Distribution")
 plt.xlabel("Popularity")
 plt.ylabel("Count")
 plt.tight_layout()
-plt.savefig("popularity_chart.png")
+plt.savefig(popularity_path)
 plt.close()
-elements.append(Image("popularity_chart.png", width=400, height=300))
+elements.append(Image(popularity_path, width=400, height=300))
 
 # Duration
 plt.figure(figsize=(10,5))
@@ -161,9 +178,9 @@ plt.xlabel("Track Position")
 plt.ylabel("Duration (minutes)")
 plt.grid(True)
 plt.tight_layout()
-plt.savefig("duration_line_chart.png")
+plt.savefig(duration_path)
 plt.close()
-elements.append(Image("duration_line_chart.png", width=400, height=300))
+elements.append(Image(duration_path, width=400, height=300))
 
 
 # Top artists
@@ -180,9 +197,9 @@ plt.xlabel("Artist")
 plt.ylabel("Number of Tracks")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("top_artists.png")
+plt.savefig(top_artists_path)
 plt.close()
-elements.append(Image("top_artists.png", width=400, height=300))
+elements.append(Image(top_artists_path, width=400, height=300))
 
 
 # Top albums
@@ -199,11 +216,11 @@ plt.xlabel("Album")
 plt.ylabel("Number of Tracks")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("top_albums.png")
+plt.savefig(top_albums_path)
 plt.close()
-elements.append(Image("top_albums.png", width=400, height=300))
+elements.append(Image(top_albums_path, width=400, height=300))
 
 
 # Build PDF
 doc.build(elements)
-print(f"Report saved as {filename}")
+print(f"Report saved to {pdf_path}")
