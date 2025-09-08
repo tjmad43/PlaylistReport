@@ -1,4 +1,4 @@
-# Spotify playlist report script
+# Backup with charts stacked
 import os
 from dotenv import load_dotenv
 import spotipy
@@ -14,7 +14,6 @@ from reportlab.platypus import (
 from reportlab.lib import colors
 from reportlab.platypus import PageBreak
 from reportlab.platypus import KeepTogether
-from reportlab.platypus import Table
 from pathlib import Path
 
 # Load variables from .env
@@ -168,24 +167,7 @@ elements.append(table)
 elements.append(Spacer(1, 30))
 
 
-def chart_block(title, image_path, width=250, height=200):
-    """Return a KeepTogether block with a subtitle and image."""
-    return KeepTogether([
-        Paragraph(title, subtitle_style),
-        Image(image_path, width=width, height=height)
-    ])
-
-
-def chart_block(title, image_path, width=250, height=200):
-    """Return a list [Paragraph, Spacer, Image] for use in a Table cell."""
-    return [
-        Paragraph(title, subtitle_style),
-        Spacer(1, 5),
-        Image(image_path, width=width, height=height)
-    ]
-
-
-# --- Explicit? ---
+# Explicit?
 explicit_counts = df['explicit'].value_counts()
 plt.figure(figsize=(6,6))
 plt.pie(
@@ -198,8 +180,14 @@ plt.pie(
 plt.title("Explicit vs Clean Tracks")
 plt.savefig(pie_path)
 plt.close()
+elements.append(KeepTogether([
+    Paragraph("Explicit vs. Clean", subtitle_style),
+    Image(pie_path, width=350, height=350),
+    Spacer(1, 30)
+]))
 
-# --- Popularity ---
+
+# Popularity
 plt.figure(figsize=(6,4))
 df["popularity"].plot(kind="hist", bins=10, edgecolor=spoticolor2, color=spoticolor1)
 plt.title("Track Popularity Distribution")
@@ -208,21 +196,14 @@ plt.ylabel("Count")
 plt.tight_layout()
 plt.savefig(popularity_path)
 plt.close()
-
-# Put Explicit + Popularity side by side
-chart_table1 = Table(
-    [
-        [chart_block("Explicit vs. Clean", pie_path, width=250, height=250),
-         chart_block("Track Popularity Distribution", popularity_path)]
-    ],
-    colWidths=[260, 260],
-    style=[('VALIGN', (0,0), (-1,-1), 'TOP')]
-)
-elements.append(chart_table1)
-elements.append(Spacer(1, 20))
+elements.append(KeepTogether([
+    Paragraph("Track Popularity Distribution", subtitle_style),
+    Image(popularity_path, width=400, height=300),
+    Spacer(1, 30)
+]))
 
 
-# --- Duration ---
+# Duration
 plt.figure(figsize=(10,5))
 plt.plot(df["position"], df["duration_min"], marker='o', linestyle='-', color=spoticolor1)
 plt.title("Track Duration Across Playlist")
@@ -232,17 +213,18 @@ plt.grid(True)
 plt.tight_layout()
 plt.savefig(duration_path)
 plt.close()
-
-# Duration full width
 elements.append(KeepTogether([
     Paragraph("Track Duration Distribution", subtitle_style),
-    Image(duration_path, width=500, height=280),
+    Image(duration_path, width=480, height=300),
     Spacer(1, 30)
 ]))
 
 
-# --- Top Artists ---
+# Top artists
+# Number of tracks per artist
 artist_counts = df['artist'].value_counts()
+
+# Get top 5 artists
 top_artists = artist_counts.head(5)
 
 plt.figure(figsize=(8,5))
@@ -254,9 +236,18 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 plt.savefig(top_artists_path)
 plt.close()
+elements.append(KeepTogether([
+    Paragraph("Top Artists", subtitle_style),
+    Image(top_artists_path, width=450, height=300),
+    Spacer(1, 30)
+]))
 
-# --- Top Albums ---
+
+# Top albums
+# Number of tracks per album
 album_counts = df['album'].value_counts()
+
+# Get top 5 albums
 top_albums = album_counts.head(5)
 
 plt.figure(figsize=(8,5))
@@ -268,17 +259,10 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 plt.savefig(top_albums_path)
 plt.close()
-
-# Put Top Artists + Top Albums side by side
-chart_table2 = Table(
-    [
-        [chart_block("Top Artists", top_artists_path),
-         chart_block("Top Albums", top_albums_path)]
-    ],
-    colWidths=[260, 260]
-)
-elements.append(chart_table2)
-elements.append(Spacer(1, 20))
+elements.append(KeepTogether([
+    Paragraph("Top Albums", subtitle_style),
+    Image(top_albums_path, width=450, height=300),
+]))
 
 # Build PDF
 doc.build(elements)
