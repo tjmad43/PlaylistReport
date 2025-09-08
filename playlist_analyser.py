@@ -91,7 +91,7 @@ df = pd.DataFrame(tracks)
 df["duration_min"] = df["duration_ms"] / 60000
 
 # Set up folder for diagrams & report
-folder_name = "playlist_report"
+folder_name = f"playlist_report - " + plname
 output_folder = Path(folder_name)
 output_folder.mkdir(exist_ok=True)
 
