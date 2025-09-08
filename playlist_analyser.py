@@ -122,6 +122,14 @@ subtitle_style = ParagraphStyle(
     textColor=colors.HexColor(spoticolor2)
 )
 
+# Chart layout
+def chart_block(title, image_path, width=250, height=200):
+    """Return a list [Paragraph, Spacer, Image] for use in a Table cell."""
+    return [
+        Paragraph(title, subtitle_style),
+        Spacer(1, 5),
+        Image(image_path, width=width, height=height)
+    ]
 
 
 # --- Visualise ---
@@ -166,15 +174,6 @@ table.setStyle(TableStyle([
 ] + row_colors))
 elements.append(table)
 elements.append(Spacer(1, 30))
-
-
-def chart_block(title, image_path, width=250, height=200):
-    """Return a list [Paragraph, Spacer, Image] for use in a Table cell."""
-    return [
-        Paragraph(title, subtitle_style),
-        Spacer(1, 5),
-        Image(image_path, width=width, height=height)
-    ]
 
 
 # --- Explicit? ---
