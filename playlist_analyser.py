@@ -169,14 +169,6 @@ elements.append(Spacer(1, 30))
 
 
 def chart_block(title, image_path, width=250, height=200):
-    """Return a KeepTogether block with a subtitle and image."""
-    return KeepTogether([
-        Paragraph(title, subtitle_style),
-        Image(image_path, width=width, height=height)
-    ])
-
-
-def chart_block(title, image_path, width=250, height=200):
     """Return a list [Paragraph, Spacer, Image] for use in a Table cell."""
     return [
         Paragraph(title, subtitle_style),
