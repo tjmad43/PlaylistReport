@@ -7,7 +7,7 @@ The report includes playlist details, summary statistics, tables, and visualizat
 - Explicit vs clean tracks (pie chart)  
 - Top artists (bar chart)  
 - Top albums (bar chart)  
-- Popularity scores  
+- Popularity scores (line chart) 
 
 Built with **Spotipy**, **Pandas**, **Matplotlib**, and **ReportLab**.
 
