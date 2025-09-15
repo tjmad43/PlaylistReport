@@ -25,3 +25,4 @@ Built with **Spotipy**, **Pandas**, **Matplotlib**, and **ReportLab**.
 ## Output
 - Call as `python playlist_analyser.py --playlist <ID or "link">`
 - Folder will be created called `playlist_report - <playlist name>` containing the chart images and the full report `playlist_report.pdf`
+- Example in `playlist_report - 2025`
